@@ -1,12 +1,20 @@
 Fixer
 ====
 
-Fixer is a Ruby wrapper to the [current and historical foreign exchange rate feeds](http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html) provided by the European Central Bank.
+Fixer is a Ruby wrapper to the [current and historical foreign exchange rate feeds provided by the European Central Bank](http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html).
 
-== Usage
+Implement your own caching.
+
+Usage
+-----
 
     # Get daily rate
     Fixer.get('daily')
     
     # Get 90-day historical
-    Fixer.get('hist-90d)
+    Fixer.get('hist-90d')
+    
+    # Get historical
+    Fixer.get('hist')
+    
+    # It doesn't get simpler than this.
