@@ -1,23 +1,27 @@
-require 'rake'
-require 'rake/testtask'
-require 'rake/rdoctask'
+require "bundler/setup"
 
-desc 'Default: run unit tests.'
-task :default => :test
+require "rspec/core/rake_task"
+require File.dirname(__FILE__) + "/lib/fixer/version"
 
-desc 'Test the forex plugin.'
-Rake::TestTask.new(:test) do |t|
-  t.libs << 'lib'
-  t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
-  t.verbose = true
+desc "Run all specs in spec directory"
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = "spec/**/*_spec.rb"
 end
 
-desc 'Generate documentation for the forex plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Forex'
-  rdoc.options << '--line-numbers' << '--inline-source'
-  rdoc.rdoc_files.include('README')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+namespace :gem do
+  desc "Build gem"
+  task :build do
+    system "gem build fixer.gemspec"
+  end
+
+  desc "Release gem"
+  task :release => :build do
+    puts "Tagging #{Fixer::VERSION}..."
+    system "git tag -a v#{Fixer::VERSION} -m 'Tagging v#{Fixer::VERSION}'"
+    puts "Pushing to Github..."
+    system "git push --tags"
+    system "gem push sucker-#{Fixer::VERSION}.gem"
+  end
 end
+
+task :default => :spec
