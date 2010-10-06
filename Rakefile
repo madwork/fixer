@@ -20,7 +20,7 @@ namespace :gem do
     system "git tag -a v#{Fixer::VERSION} -m 'Tagging v#{Fixer::VERSION}'"
     puts "Pushing to Github..."
     system "git push --tags"
-    system "gem push sucker-#{Fixer::VERSION}.gem"
+    system "gem push fixer-#{Fixer::VERSION}.gem"
   end
 end
 
