@@ -17,4 +17,4 @@ Usage
     # Get historical
     Fixer.get('hist')
     
-    # It doesn't get simpler than this.
+    # It doesn't get any simpler than this.
