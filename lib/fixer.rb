@@ -3,8 +3,6 @@ require 'open-uri'
 require 'nokogiri'
 
 module Fixer
-  BASE_URL = 'http://www.ecb.europa.eu/stats/eurofxref/'
-
   class << self
     def daily
       get('daily')
@@ -21,16 +19,16 @@ module Fixer
     private
 
     def get(type)
-      url = BASE_URL + "eurofxref-#{type}.xml"
-      feed = open(url).read
-      doc = Nokogiri::XML(feed)
+      path  = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-#{type}.xml"
+      feed  = open(path).read
+      doc   = Nokogiri::XML(feed)
       doc.xpath('/gesmes:Envelope/xmlns:Cube/xmlns:Cube', doc.root.namespaces).map do |snapshot|
         {
           :date   => snapshot['time'],
           :rates  => snapshot.xpath('./xmlns:Cube').map do |fx|
             {
-              :currency     => fx['currency'],
-              :rate         => fx['rate']
+              :currency => fx['currency'],
+              :rate     => fx['rate']
             }
           end
         }
