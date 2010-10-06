@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version     = Fixer::VERSION
   s.authors     = ["Hakan Ensari"]
   s.email       = ["code@papercavalier.com"]
-  s.homepage    = "http://github.com/papercavalier/fixer"
+  s.homepage    = "http://fixer.heroku.com"
   s.summary     = "A Ruby wrapper to the European Central Bank exchange rate feeds"
   s.description = "Fixer is a Ruby wrapper to the current and historical foreign exchange or FX rate feeds provided by the European Central Bank."
 
