@@ -9,12 +9,12 @@ Usage
 -----
 
     # Get daily rate
-    Fixer.get('daily')
+    Fixer.daily
     
     # Get 90-day historical
-    Fixer.get('hist-90d')
+    Fixer.historical_90
     
     # Get historical
-    Fixer.get('hist')
+    Fixer.historical
     
     # It doesn't get any simpler than this.
