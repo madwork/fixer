@@ -1,23 +1,12 @@
 # encoding: utf-8
 require 'open-uri'
 require 'nokogiri'
+require File.dirname(__FILE__) + '/fixer/cache'
 
 module Fixer
   class << self
-    def base_currency
-      @base_currency || "USD"
-    end
-
-    def base_currency=(name)
-      @base_currency = name
-    end
-
     def daily
       get('daily')
-    end
-
-    def expire_cache
-      @daily = nil
     end
 
     def historical
@@ -28,18 +17,7 @@ module Fixer
       get('hist-90d')
     end
 
-    def self.method_missing(sym, *args, &block)
-      if false
-      else
-        super
-      end
-    end
-
     private
-
-    def cached_daily
-      @daily ||= daily
-    end
 
     def get(type)
       path  = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-#{type}.xml"
