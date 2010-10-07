@@ -3,61 +3,78 @@ require 'spec_helper'
 
 module Fixer
   describe Cache do
-    before do
-      @mock_rates = [
+    let(:mock_rates) do
+      [
         { :currency=>"USD", :rate=>"1.3856" },
         { :currency=>"JPY", :rate=>"114.98" },
         { :currency=>"GBP", :rate=>"0.87260" },
         { :currency=>"CAD", :rate=>"1.4018" },
         { :currency=>"EUR", :rate=>"1.0" }
       ]
-      @fx = Fixer::Cache
     end
 
-    it "defaults to EUR as base currency" do
-      @fx.base.should eql "EUR"
+    let(:cache) do
+      cache = Fixer::Cache
+      cache.base = "EUR"
+      cache.expire
+      cache
     end
 
     it "sets base currency" do
-      @fx.base = "USD"
-      @fx.base.should eql "USD"
+      cache.base = "USD"
+      cache.base.should eql "USD"
     end
 
     it "quotes" do
-      @fx.send(:quote, "USD").should eql 1.3856
+      cache.instance_variable_set(:@rates, mock_rates)
+      cache.send(:quote, "USD").should eql 1.3856
     end
 
     it "caches" do
-      @fx.instance_variable_set(:@rates, "foo")
-      @fx.send(:rates).should eql "foo"
+      cache.instance_variable_set(:@rates, "foo")
+      cache.send(:rates).should eql "foo"
     end
 
     it "seeds cache" do
-      @fx.send(:rates).detect { |rate| rate[:currency] == "USD" }[:rate].should_not be_nil
+      cache.send(:rates).detect { |rate| rate[:currency] == "USD" }[:rate].should_not be_nil
     end
 
     it "expires cache" do
-      @fx.instance_variable_set(:@rates, "foo")
-      @fx.expire
-      @fx.instance_variable_get(:@rates).should be_nil
+      cache.instance_variable_set(:@rates, "foo")
+      cache.expire
+      cache.instance_variable_get(:@rates).should be_nil
     end
 
-    context "Quoting custom exchange rates" do
-      it "returns an exchange rate" do
-        @fx.instance_variable_set(:@rates, @mock_rates)
-        @fx.to_usd.should eql 1.3856
+    it "raises an error if cache not valid" do
+      Fixer.stub!(:daily).and_return("foo")
+      lambda { cache.send(:rates) }.should raise_error Fixer::Error, "Cache not valid"
+    end
 
-        @fx.base = "GBP"
-        @fx.to_usd.should eql 1.5879
-      end
+    it "returns an exchange rate" do
+      cache.instance_variable_set(:@rates, mock_rates)
+      cache.to_eur.should eql 1.0
+      cache.to_usd.should eql 1.3856
 
-      it "raises an error if requested currency is not valid" do
-        pending
-      end
+      cache.base = "GBP"
+      cache.to_gbp.should eql 1.0
+      cache.to_usd.should eql 1.5879
+    end
 
-      it "raises an error if cache is not valid" do
-        pending
-      end
+    it "caches requested exchange rates" do
+      cache.instance_variable_set(:@rates, mock_rates)
+      cache.to_usd
+      cache.instance_variable_get(:@EUR_USD).should eql 1.3856
+    end
+
+    it "raises an error if counter currency not valid" do
+      cache.instance_variable_set(:@rates, mock_rates)
+      lambda { cache.to_foo }.should raise_error Fixer::Error, "Currency not valid"
+    end
+
+    it "raises an error if base currency not valid" do
+      cache.instance_variable_set(:@rates, mock_rates)
+      cache.base = "FOO"
+      lambda { cache.to_usd }.should raise_error Fixer::Error, "Currency not valid"
     end
   end
 end
