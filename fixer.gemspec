@@ -1,25 +1,26 @@
 # -*- encoding: utf-8 -*-
-require File.dirname(__FILE__) + "/lib/fixer/version"
+$:.push File.expand_path("../lib", __FILE__)
+require "fixer/version"
 
 Gem::Specification.new do |s|
   s.name        = "fixer"
   s.version     = Fixer::VERSION
+  s.platform    = Gem::Platform::RUBY
   s.authors     = ["Hakan Ensari"]
   s.email       = ["code@papercavalier.com"]
   s.homepage    = "http://fixer.heroku.com"
   s.summary     = "A Ruby wrapper to the European Central Bank exchange rate feeds"
   s.description = "Fixer is a Ruby wrapper to the current and historical foreign exchange or FX rate feeds provided by the European Central Bank."
 
-  s.required_rubygems_version = ">= 1.3.7"
+  s.rubyforge_project = "fixer"
 
   s.add_dependency("nokogiri", ["~> 1.4.0"])
 
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec", ["= 2.0.0.rc"])
 
-  s.files         = Dir.glob("lib/**/*") + %w(LICENSE README.markdown)
-  s.test_files    = Dir.glob("spec/**/*")
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-
-  s.rdoc_options = ["--charset=UTF-8"]
 end
