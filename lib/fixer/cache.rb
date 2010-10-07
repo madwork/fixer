@@ -42,7 +42,7 @@ module Fixer
 
       def quote(counter)
         rate = rates.detect { |rate| rate[:currency] == counter }
-        raise(Error, "Currency not valid") if rate.nil?
+        raise(Error, "#{counter} not a valid currency") if rate.nil?
         rate[:rate].to_f
       end
     end

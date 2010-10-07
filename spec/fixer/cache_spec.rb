@@ -68,13 +68,13 @@ module Fixer
 
     it "raises an error if counter currency not valid" do
       cache.instance_variable_set(:@rates, mock_rates)
-      lambda { cache.to_foo }.should raise_error Fixer::Error, "Currency not valid"
+      lambda { cache.to_foo }.should raise_error Fixer::Error, "FOO not a valid currency"
     end
 
     it "raises an error if base currency not valid" do
       cache.instance_variable_set(:@rates, mock_rates)
-      cache.base = "FOO"
-      lambda { cache.to_usd }.should raise_error Fixer::Error, "Currency not valid"
+      cache.base = "BAR"
+      lambda { cache.to_usd }.should raise_error Fixer::Error, "BAR not a valid currency"
     end
   end
 end
