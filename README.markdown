@@ -10,21 +10,22 @@ Bonus: Use the Money gem.
 Usage
 -----
 
-    # Download the daily rates.
+Download the current, 90-day, or historical rates:
+
     Fixer.daily
-    
-    # Download the 90-day historical rates.
     Fixer.historical_90
-    
-    # Download all historical rates.
     Fixer.historical
     
-    # Use the built-in cache.
+Use the built-in cache. The base currency will default to €:
+
     cache = Fixer::Cache
-    cache.to_usd
+    cache.to_usd # a EUR/USD quote
     => 1.397
-    cache.base = "EUR"
+
+Switch base currency to USD and get a USD/EUR quote:
+
+    cache.base = "USD"
     cache.to_eur
     => 0.7158
-    
-    # It doesn't get any simpler than this.
+
+Cache is a singleton class and should hit the ECB only once in a long-running process.
