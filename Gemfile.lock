@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fixer (0.2.0)
+    fixer (0.2.1)
       nokogiri (~> 1.4.0)
 
 GEM
