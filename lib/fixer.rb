@@ -1,7 +1,5 @@
-# encoding: utf-8
 require 'open-uri'
 require 'nokogiri'
-require File.dirname(__FILE__) + '/fixer/cache'
 
 module Fixer
   class << self

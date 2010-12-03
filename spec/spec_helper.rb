@@ -1,6 +1,4 @@
-# encoding: utf-8
-require "rubygems"
-require "bundler/setup"
+require "bundler"
 require "rspec"
 
 require File.expand_path("../../lib/fixer", __FILE__)

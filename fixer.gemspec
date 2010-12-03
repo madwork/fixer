@@ -10,14 +10,12 @@ Gem::Specification.new do |s|
   s.email       = ["code@papercavalier.com"]
   s.homepage    = "http://fixer.heroku.com"
   s.summary     = "A Ruby wrapper to the European Central Bank exchange rate feeds"
-  s.description = "Fixer is a Ruby wrapper to the current and historical foreign exchange or FX rate feeds provided by the European Central Bank."
+  s.description = "Fixer is a Ruby wrapper to the current and historical foreign exchange or FX rate feeds of the European Central Bank."
 
   s.rubyforge_project = "fixer"
 
   s.add_dependency("nokogiri", ["~> 1.4.0"])
-
-  s.add_development_dependency("rake", "~> 0.8.7")
-  s.add_development_dependency("rspec", ["~> 2.0.0"])
+  s.add_development_dependency("rspec", ["~> 2.1.0"])
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
