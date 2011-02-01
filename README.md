@@ -10,35 +10,55 @@ Usage
     Fixer.historical_90
     Fixer.historical
 
-To get things rolling, here is a minimal implementation with a Mongoid-based model and and a bank:
+The following is a simple implementation with a Mongoid model and a Ruby Money bank serving current rates:
 
-    class ForeignExchangeRate
+    # The model
+    class Currency
       include Mongoid::Document
-      field :currency
-      field :rate, :type => Float
-      key   :currency
 
-      def self.quote(counter,base)
-        find(counter.downcase).rate / find(base.downcase).rate).round(4)
+      field :iso_code
+      field :rate, :type => Float
+      index :iso_code, :unique => true
+
+      before_save :update_cache
+
+      def self.quote(counter, base="EUR")
+        rate_for(counter) / rate_for(base)
+      end
+
+      private
+
+      def self.rates
+        @rates ||= {}
+      end
+
+      def self.rate_for(iso_code)
+        rates[iso_code.to_sym] ||= where(:iso_code => currency).first.rate
+      end
+
+      def update_cache
+        self.class.rates[iso_code.to_sym] = rate
       end
     end
 
+    # The bank
     class ECB < Money::Bank::Base
       def self.refresh
         hashes = Fixer.daily.first[:rates]
-        hashes.push({ :currency => "EUR", :rate => "1.0" })
+        hashes.push({ :currency => "EUR", :rate => 1.0 })
         hashes.each do |hash|
-          fx = ForeignExchangeRate.find_or_create_by(
-            :currency => hash[:currency])
+          fx = Currency.find_or_initialize_by(
+            :iso_code => hash[:currency])
           fx.rate = hash[:rate]
-          fx.update
+          fx.save
         end
       end
 
       def exchange_with(from, to_currency)
-        counter = to_currency.iso_code
-        base    = from.currency.iso_code
-        rate    = ForeignExchangeRate.quote(counter, base)
+        rate = Currency.quote(to_currency.iso_code, from.currency.iso_code)
         Money.new((from.cents * rate).floor, to_currency)
       end
     end
+
+    # The initializer
+    Money.default_bank = ECB.new
