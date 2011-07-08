@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Fixer do
   it "downloads daily rates" do
