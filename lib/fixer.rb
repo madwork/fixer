@@ -1,37 +1,23 @@
-require 'nokogiri'
-require 'open-uri'
+require 'fixer/feed'
+require 'fixer/builder'
 
 module Fixer
-  class << self
-    def daily
-      get('daily')
-    end
+  extend self
 
-    def historical
-      get('hist')
-    end
+  def daily
+    Feed.new('daily').get
+  end
 
-    def historical_90
-      get('hist-90d')
-    end
+  def historical
+    Feed.new('hist').get
+  end
 
-    private
+  def historical_90
+    Kernel.warn("[DEPRECATION] `historical_90` is deprecated.  Please use `ninety_days` instead.")
+    ninety_days
+  end
 
-    def get(type)
-      path  = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-#{type}.xml"
-      feed  = open(path).read
-      doc   = Nokogiri::XML(feed)
-      doc.xpath('/gesmes:Envelope/xmlns:Cube/xmlns:Cube', doc.root.namespaces).map do |snapshot|
-        {
-          :date   => snapshot['time'],
-          :rates  => snapshot.xpath('./xmlns:Cube').map do |fx|
-            {
-              :currency => fx['currency'],
-              :rate     => fx['rate']
-            }
-          end
-        }
-      end
-    end
+  def ninety_days
+    Feed.new('hist-90d').get
   end
 end
