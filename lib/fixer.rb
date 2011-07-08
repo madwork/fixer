@@ -13,7 +13,7 @@ module Fixer
   end
 
   def historical_90
-    Kernel.warn("[DEPRECATION] `historical_90` is deprecated.  Please use `ninety_days` instead.")
+    Kernel.warn("[DEPRECATION] `historical_90` is deprecated. Please use `ninety_days` instead.")
     ninety_days
   end
 
