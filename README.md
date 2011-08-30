@@ -1,6 +1,8 @@
 Fixer
 ====
 
+TODO: Add note to run: rake fixer:install
+
 Fixer wraps the current and historical
 [foreign exchange rate feeds](http://www.ecb.europa.eu/stats/exchange/eurofxref/html/index.en.html)
 of the European Central Bank.
