@@ -1,50 +1,51 @@
-require 'date'
 require 'mongo'
 
 module Fixer
-  # A Currency.
-  #
-  # Structurally, a currency consists of an ISO code and a collection
-  # of dated rates.
+  # A collection of historical rates for a currency quoted against the
+  # Euro as base currency.
   class Currency
-    # The collection in which rates are stored on the database.
-    def self.collection
-      Connection.database['currencies']
+    class << self; alias_method :[], :new; end
+
+    # Quotes the rate a counter currency could be exchanged for a
+    # unit of a base currency on a specified date or the current
+    # date if latter is not specified.
+    def self.quote(counter, base, date = Time.now)
+      rate = new(counter).find_rate(date) / new(base).find_rate(date)
+
+      (10000 * rate).round.to_f / 10000
     end
 
-    def self.create_indexes
-      collection.create_index([["date", Mongo::DESCENDING]])
-    end
-
-    def self.find(code, date = Date.today)
-      # collection.find({ 'code' => code, 'rates' => { 'date' => { '$lte' => date } } }, { :limit => 1 })
-    end
-
-    # Inserts a hash representing a currency snapshot into the
-    # database.
+    # Upserts a hash representing a historical rate into the
+    # collection of its currency.
     def self.upsert(hsh)
-      selector = { 'code' => hsh[:code] }
-      modifier = {
-        '$addToSet' => {
-          'rates' => {
-            'date' => hsh[:date],
-            'rate' => hsh[:rate]
-          }
-        }
-      }
+      mod  = hsh.dup
+      code = mod.delete(:code)
+      sel  = { 'date' => hsh[:date] }
 
-      collection.update(selector, modifier, :upsert => true)
+      new(code).collection.update(sel, mod, :upsert => true)
     end
 
-    # The ISO code of the currency.
-    attr :code
+    def initialize(code)
+      @code = code.downcase
+    end
 
-    # The currency rate.
-    attr :rate
+    # The collection object.
+    def collection
+      @collection ||= Connection.database["#{@code}_rates"]
+    end
 
-    # The date the currency rate was recorded.
-    attr :date
+    # Returns the historical rate nearest to the specified date.
+    #
+    # Returns nil if no historical rate is available.
+    def find_rate(date)
+      return 1 if @code == 'eur'
+
+      sel  = { 'date' => { '$lte' => date } }
+      opts = { :limit => 1,
+               :sort => [['date', Mongo::DESCENDING]] }
+      doc = collection.find(sel, opts).first
+
+      doc ? doc['rate'] : nil
+    end
   end
 end
-
-# coll.index_information()
