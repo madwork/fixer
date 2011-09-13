@@ -22,7 +22,7 @@ module Fixer
 
     # Inserts a hash representing a currency snapshot into the
     # database.
-    def self.insert(hsh)
+    def self.upsert(hsh)
       selector = { 'code' => hsh[:code] }
       modifier = {
         '$addToSet' => {

@@ -10,7 +10,7 @@ class CurrencyTest < Test::Unit::TestCase
     hsh = { :code => 'USD',
             :date => Time.new(2011, 9, 12),
             :rate => 1.3656 }
-    2.times { Fixer::Currency.insert(hsh) }
+    2.times { Fixer::Currency.upsert(hsh) }
     assert_equal 1, Fixer::Currency.collection.find().to_a.size
   end
 end
