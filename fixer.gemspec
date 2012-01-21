@@ -15,7 +15,5 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency("money", ["~> 3.7"])
-  s.add_dependency "mongo", "~> 1.3"
   s.add_dependency("nokogiri", ["~> 1.4"])
 end

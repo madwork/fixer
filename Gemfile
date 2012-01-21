@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 gemspec
 
-gem 'bson_ext'
+gem 'money'
+gem 'mongo'
 gem 'pry' unless ENV['CI']
 gem 'rake'
 gem 'vcr'
