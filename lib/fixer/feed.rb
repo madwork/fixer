@@ -1,4 +1,3 @@
-require 'date'
 require 'net/http'
 require 'nokogiri'
 
