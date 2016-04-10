@@ -1,48 +1,45 @@
 require 'net/http'
-require 'nokogiri'
+require 'oga'
 
 module Fixer
-   class Feed
-     include Enumerable
+  class Feed
+    include Enumerable
 
-     FEEDS = {
-       current:     'daily',
-       ninety_days: 'hist-90d',
-       historical:  'hist'
-     }
+    TYPES = {
+      current: 'daily',
+      ninety_days: 'hist-90d',
+      historical: 'hist'
+    }.freeze
 
-     def initialize(feed = :current)
-       @feed = FEEDS[feed] or raise ArgumentError
-     end
+    def initialize(type = :current)
+      @type = TYPES.fetch(type) { raise ArgumentError }
+    end
 
-     def each(&block)
-       xml
-         .xpath('/gesmes:Envelope/xmlns:Cube/xmlns:Cube', namespaces)
-         .each do |day|
-           day.xpath('./xmlns:Cube').each do |fx|
-             yield date:     day['time'],
-                   iso_code: fx['currency'],
-                   rate:     Float(fx['rate'])
-           end
-         end
-     end
+    def each
+      document.xpath('/Envelope/Cube/Cube').each do |day|
+        date = Date.parse(day.attribute('time').value)
+        day.xpath('./Cube').each do |currency|
+          yield(
+            date: date,
+            iso_code: currency.attribute('currency').value,
+            rate: Float(currency.attribute('rate').value)
+          )
+        end
+      end
+    end
 
-     private
+    private
 
-     def body
-       Net::HTTP.get uri
-     end
+    def document
+      Oga.parse_xml(xml)
+    end
 
-     def namespaces
-       xml.root.namespaces
-     end
+    def xml
+      Net::HTTP.get(url)
+    end
 
-     def uri
-       URI "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-#{@feed}.xml"
-     end
-
-     def xml
-       Nokogiri::XML body
-     end
-   end
+    def url
+      URI("http://www.ecb.europa.eu/stats/eurofxref/eurofxref-#{@type}.xml")
+    end
+  end
 end

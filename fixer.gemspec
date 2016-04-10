@@ -1,21 +1,23 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path '../lib/fixer/version', __FILE__
+# coding: utf-8
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'fixer/version'
 
-Gem::Specification.new do |gem|
-  gem.authors       = ['Hakan Ensari']
-  gem.email         = ['hakan.ensari@papercavalier.com']
-  gem.description   = 'Current and historical foreign exchange rate feeds'
-  gem.summary       = 'Foreign exchange rate feeds'
-  gem.homepage      = 'http://github.com/hakanensari/fixer'
+Gem::Specification.new do |spec|
+  spec.name          = 'fixer'
+  spec.version       = Fixer::VERSION
+  spec.author        = ['Hakan Ensari']
+  spec.email         = ['hakanensari@gmail.com']
+  spec.summary       = 'A wrapper to the exchange rate feeds of the European Central Bank'
+  spec.homepage      = 'https://github.com/hakanensari/fixer'
+  spec.license       = 'MIT'
+  spec.files         = Dir.glob('lib/**/*') + %w(LICENSE README.md)
+  spec.require_paths = ['lib']
 
-  gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename f }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = 'fixer'
-  gem.require_paths = ['lib']
-  gem.version       = Fixer::VERSION
-
-  gem.add_runtime_dependency     'nokogiri', '~> 1.5'
-  gem.add_development_dependency 'vcr'
-  gem.add_development_dependency 'webmock'
+  spec.add_dependency 'oga', '~> 2.0'
+  spec.add_development_dependency 'bundler', '~> 1.0'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'vcr', '~> 3.0'
+  spec.add_development_dependency 'webmock', '~> 1.24'
 end

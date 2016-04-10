@@ -5,27 +5,37 @@ module Fixer
     before { VCR.insert_cassette 'fixer' }
     after  { VCR.eject_cassette }
 
-    let(:current)     { Feed.new }
-    let(:ninety_days) { Feed.new :ninety_days }
-    let(:historical)  { Feed.new :historical }
+    it 'parses the date of a currency' do
+      feed = Feed.new
+      currency = feed.first
+      currency[:date].must_be_kind_of Date
+    end
 
-    it 'returns currency hashes' do
-      currency = current.first
-      currency[:date].must_be_kind_of     String
+    it 'parse the ISO code of a currency' do
+      feed = Feed.new
+      currency = feed.first
       currency[:iso_code].must_be_kind_of String
-      currency[:rate].must_be_kind_of     Float
     end
 
-    it 'downloads current rates' do
-      current.count.must_be :<, 40
+    it 'parses the rate of a currency' do
+      feed = Feed.new
+      currency = feed.first
+      currency[:rate].must_be_kind_of Float
     end
 
-    it 'downloads rates for the past 90 days' do
-      ninety_days.count.must_be :>, 33 * 60
+    it 'fetches current rates' do
+      feed = Feed.new
+      feed.count.must_be :<, 40
     end
 
-    it 'downloads historical rates' do
-      historical.count.must_be :>, 33 * 3000
+    it 'fetches rates for the past 90 days' do
+      feed = Feed.new(:ninety_days)
+      feed.count.must_be :>, 33 * 60
+    end
+
+    it 'fetches historical rates' do
+      feed = Feed.new(:historical)
+      feed.count.must_be :>, 33 * 3000
     end
   end
 end
