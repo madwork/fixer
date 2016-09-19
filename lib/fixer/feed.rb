@@ -1,5 +1,5 @@
 require 'net/http'
-require 'oga'
+require 'rexml/document'
 
 module Fixer
   class Feed
@@ -16,9 +16,9 @@ module Fixer
     end
 
     def each
-      document.xpath('/Envelope/Cube/Cube').each do |day|
+      REXML::XPath.each(document, '//Cube/Cube[@time]') do |day|
         date = Date.parse(day.attribute('time').value)
-        day.xpath('./Cube').each do |currency|
+        REXML::XPath.each(day, './Cube') do |currency|
           yield(
             date: date,
             iso_code: currency.attribute('currency').value,
@@ -31,7 +31,7 @@ module Fixer
     private
 
     def document
-      Oga.parse_xml(xml)
+      REXML::Document.new(xml)
     end
 
     def xml
