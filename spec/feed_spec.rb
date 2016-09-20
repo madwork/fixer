@@ -37,5 +37,9 @@ module Fixer
       feed = Feed.new(:historical)
       feed.count.must_be :>, 33 * 3000
     end
+
+    it 'raises error with invalid type' do
+      -> { Feed.new(:invalid) }.must_raise ArgumentError
+    end
   end
 end
